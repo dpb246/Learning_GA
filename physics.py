@@ -1,6 +1,9 @@
 import population
 import individual
 from math import sqrt
+'''
+Handles the collision checking between circles and walls/edge of screen
+'''
 class physics:
     def __init__(self, goal, engine):
         self.goal = goal
@@ -10,6 +13,7 @@ class physics:
         return sorted((value, minval, maxval))[1]
     def check(self, individuals, walls=[]):
         radius = self.engine.circle_size
+        changed = 0
         for person in individuals:
             if person.active(): continue
             #check walls
@@ -20,9 +24,13 @@ class physics:
                 distanceY = y_p - self.clamp(y_p, y_w, y_w+y_size)
                 if (distanceX * distanceX) + (distanceY * distanceY) < (radius * radius):
                     person.kill()
+                    changed += 1
             #check edges
             if x_p-radius < 0 or x_p+radius > self.engine.x_size or y_p-radius < 0 or y_p+radius > self.engine.y_size:
                 person.kill()
+                changed += 1
             #Check goal
             if (self.goal[0] - x_p)**2 + (self.goal[1] - y_p)**2 <= (radius*2)**2:
                 person.win_game()
+                changed += 1
+        #print(changed)

@@ -1,5 +1,8 @@
 import pygame
-
+'''
+Class that handles drawing all the walls, circles, and goal
+Pass Frame() the list of circles and walls
+'''
 class Render_Engine:
     def __init__(self, screen, goal_pos, screen_size):
         self.x_size, self.y_size = screen_size
@@ -21,5 +24,7 @@ class Render_Engine:
         for wall in walls:
             pygame.draw.rect(self.screen, self.black, wall, 0)
     def draw_circles(self, circles):
-        for circle in circles:
-            pygame.draw.circle(self.screen, self.circle_colour, circle, self.circle_size, 0)
+        if len(circles) < 1: return 0
+        for i in range(1, len(circles)):
+            pygame.draw.circle(self.screen, self.circle_colour, circles[i], self.circle_size, 0)
+        pygame.draw.circle(self.screen, (21, 175, 72), circles[0], self.circle_size, 0)#Draw the first one as a different colour since it was the best one from last gen
