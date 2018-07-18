@@ -27,8 +27,8 @@ class brain:
         self.done = False
         self.counter = 0
     def mutate(self, parent_fitness):
-        if self.mutation_rate > ( 1/parent_fitness )/1000:#Reduce the mutation rate the closer the parent was to the goal
-            self.mutation_rate = ( 1/parent_fitness )/1000
+        #if self.mutation_rate > ( 1/parent_fitness )/1000:#Reduce the mutation rate the closer the parent was to the goal
+        #    self.mutation_rate = ( 1/parent_fitness )/1000
         for index, element in enumerate(self.steps):
             if random.random() < self.mutation_rate:
                 self.steps[index] = [random.random()*random.randrange(-1, 2, 2)/4 for i in range(2)]

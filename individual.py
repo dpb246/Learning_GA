@@ -18,7 +18,7 @@ class person(object):
         self.steps = steps
     def get_fitness(self, goal): #Returns distance to goal
         if self.win:
-            self.fitness = self.brain.counter**2
+            self.fitness = (self.brain.number_of_steps - self.brain.counter)**2
         else:
             self.fitness = 1/((self.pos[0]-goal[0])**2 + (self.pos[1]-goal[1])**2)
         return self.fitness
