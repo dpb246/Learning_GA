@@ -16,7 +16,7 @@ screen = pygame.display.set_mode(screen_size)
 engine = Render_Engine(screen, goal, screen_size)
 physics = physics.physics(goal, engine)
 pop = population.population(spawn_point, population_size=100, steps=max_steps)
-walls = [[500, 300, 10, 600]] #Walls: format [x, y, x_size, y_size]
+walls = [[500, 300, 10, 600], [600, 0, 10, 500]] #Walls: format [x, y, x_size, y_size]
 gen = 0
 while True:
     # Closes program when red[x] button in corner is pressed
@@ -30,9 +30,11 @@ while True:
     if pop.everyone_dead():
         #Everyone died reset and advance to next generation
         print("Gen:", gen)
+
         pop.calc_fitness_scores(goal)
         pop.selection(goal)
         pop.reset()
+        print("Steps taken:", pop.min_steps)
         gen += 1
     else:
         #Continue moving and updating
