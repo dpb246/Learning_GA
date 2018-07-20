@@ -51,15 +51,39 @@ class population:
             if running_sum > random_number:
                 return i
         return None
+    def create_child(self, individual1, individual2):
+        child = person(individual1.starting_pos, individual1.steps, individual1.max_speed)
+        for i in range(individual1.steps):
+            if (100 * random.random() < 50):
+                child.brain.steps[i] = individual1.brain.steps[i]
+            else:
+                child.brain.steps[i] = individual2.brain.steps[i]
+        child.brain.mutate()
+        return deepcopy(child) #randomly select each allel from the two parents
+    def select_breeders(self, population_sorted):
+        result = []
+        best_individuals = self.population_size / 5
+        lucky_few = self.population_size / 5
+        for i in range(int(best_individuals)):
+            result.append(population_sorted[i])
+        for i in range(int(lucky_few)):
+            result.append(random.choice(population_sorted))
+        random.shuffle(result)
+        return result
     def selection(self, goal):
-        self.next_gen = [person(self.spawn_point, self.steps) for i in range(self.population_size)]
+        self.next_gen = []
         self.calc_fitness_scores(goal)
         best_person = self.best_person(goal)
-        self.next_gen[0] = best_person.child()
-        for i in range(1, len(self.next_gen)):
-            parent = self.select_parent()
-            self.next_gen[i] = parent.child()
-            self.next_gen[i].brain.mutate(parent.fitness)
+        self.next_gen.append(best_person.child())
+        for i in range(1, self.population_size-3, 2):
+            parent1 = self.select_parent()
+            parent2 = self.select_parent()
+            for j in range(2):
+                self.next_gen.append(self.create_child(parent1, parent2))
+                self.next_gen[-1].brain.mutate()
+        for j in range(2):
+            self.next_gen.append(best_person.child())
+            self.next_gen[-1].brain.special_mutate()
         self.individuals = deepcopy(self.next_gen)
     def reset(self):
         for i in self.individuals:

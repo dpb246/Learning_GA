@@ -5,6 +5,8 @@ from brain import *
 '''
 A circle with a position and velocity, each has a brain that contains the accel vectors
 '''
+def clamp(minval, value, maxval):
+    return sorted((value, minval, maxval))[1]
 class person(object):
     def __init__(self, starting_pos, steps=100, max_speed=10):
         self.pos = deepcopy(starting_pos)
@@ -18,9 +20,10 @@ class person(object):
         self.steps = steps
     def get_fitness(self, goal): #Returns distance to goal
         if self.win:
-            self.fitness = (self.brain.number_of_steps - self.brain.counter)**2
+            self.fitness = (self.brain.number_of_steps - self.brain.counter)**6
         else:
-            self.fitness = 1/((self.pos[0]-goal[0])**2 + (self.pos[1]-goal[1])**2)
+            distance2 = ((self.pos[0]-goal[0])**2 + (self.pos[1]-goal[1])**2)
+            self.fitness = 100/((self.pos[0]-goal[0])**2 + (self.pos[1]-goal[1])**2)
         return self.fitness
     def kill(self):
         self.is_dead = True
@@ -50,11 +53,12 @@ class person(object):
             #Add accel
             self.velocity[i] += step[i]
             #Cap velocity
-            if self.velocity[i] > self.max_speed:
+            self.velocity[i] = clamp(-self.max_speed, self.velocity[i], self.max_speed)
+            '''if self.velocity[i] > self.max_speed:
                 self.velocity[i] = self.max_speed
                 #print("MAX SPEED", id)
             if self.velocity[i] < -self.max_speed:
-                self.velocity[i] = -self.max_speed
+                self.velocity[i] = -self.max_speed'''
                 #print("MAX SPEED", id)
             #Change pos
             self.pos[i] += self.velocity[i]
