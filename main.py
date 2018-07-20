@@ -30,6 +30,7 @@ while True:
     if pop.everyone_dead():
         #Everyone died reset and advance to next generation
         print("Gen:", gen)
+        engine.frame(pop.get_positions(), walls)
         pop.calc_fitness_scores(goal)
         pop.selection(goal)
         pop.reset()
