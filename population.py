@@ -7,7 +7,7 @@ Population of individuals, contains all the evolutionary logic
 '''
 class population:
     def __init__(self, spawn_point, population_size=10, steps=100):
-        self.individuals = [person(spawn_point, steps) for i in range(population_size)]
+        self.individuals = [person(spawn_point, steps, mutation_rate=0.01) for i in range(population_size)]
         self.positions = []
         self.fitness_scores = []
         self.fittest = 0
@@ -52,7 +52,7 @@ class population:
                 return i
         return None
     def create_child(self, individual1, individual2):
-        child = person(individual1.starting_pos, individual1.steps, individual1.max_speed)
+        child = person(individual1.starting_pos, individual1.steps, individual1.max_speed, individual1.mutation_rate)
         for i in range(individual1.steps):
             if (100 * random.random() < 50):
                 child.brain.steps[i] = individual1.brain.steps[i]
@@ -83,7 +83,7 @@ class population:
                 self.next_gen[-1].brain.mutate()
         for j in range(2):
             self.next_gen.append(best_person.child())
-            self.next_gen[-1].brain.special_mutate()
+            self.next_gen[-1].brain.special_mutate(best_person.brain.counter)
         self.individuals = deepcopy(self.next_gen)
     def reset(self):
         for i in self.individuals:

@@ -29,8 +29,15 @@ class brain:
     def mutate(self):
         for index, element in enumerate(self.steps):
             if random.random() < self.mutation_rate:
-                self.steps[index] = [random.random()*random.randrange(-1, 2, 2)/4 for i in range(2)]
-    def special_mutate(self):
-        for index, element in enumerate(self.steps[-100:]):#only mutate last few
+                #self.steps[index] = [random.random()*random.randrange(-1, 2, 2)/4 for i in range(2)]
+                for i in range(2):
+                    self.steps[index][i] += (random.random()*random.randrange(-1, 2, 2)/4) / 10 #Step 1/100 in a direction
+        if random.random() < 0.05:
+            self.mutation_rate += (random.random()*random.randrange(-1, 2, 2)/4) / 100
+    def special_mutate(self, steps_taken):
+        for index, element in enumerate(self.steps[-(self.number_of_steps-steps_taken+100):]):#only mutate last few
             if random.random() < self.mutation_rate:
-                self.steps[index] = [random.random()*random.randrange(-1, 2, 2)/4 for i in range(2)]
+                for i in range(2):
+                    self.steps[index][i] += (random.random()*random.randrange(-1, 2, 2)/4) / 10
+        if random.random() < 0.05:
+            self.mutation_rate += (random.random()*random.randrange(-1, 2, 2)/4) / 100

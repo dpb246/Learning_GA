@@ -8,22 +8,22 @@ A circle with a position and velocity, each has a brain that contains the accel 
 def clamp(minval, value, maxval):
     return sorted((value, minval, maxval))[1]
 class person(object):
-    def __init__(self, starting_pos, steps=100, max_speed=10):
+    def __init__(self, starting_pos, steps=100, max_speed=7, mutation_rate=0.01):
         self.pos = deepcopy(starting_pos)
         self.starting_pos = starting_pos
         self.velocity = [0,0]
-        self.brain = brain(steps)
+        self.brain = brain(steps, mutation_rate=mutation_rate)
         self.is_dead = False #Stores if it should be updated
         self.max_speed = max_speed
         self.win = False
         self.fitness = 0
+        self.mutation_rate=mutation_rate
         self.steps = steps
     def get_fitness(self, goal): #Returns distance to goal
         if self.win:
-            self.fitness = (self.brain.number_of_steps - self.brain.counter)**6
+            self.fitness = (self.brain.number_of_steps - self.brain.counter)**8
         else:
-            distance2 = ((self.pos[0]-goal[0])**2 + (self.pos[1]-goal[1])**2)
-            self.fitness = 100/((self.pos[0]-goal[0])**2 + (self.pos[1]-goal[1])**2)
+            self.fitness = 1000/((self.pos[0]-goal[0])**2 + (self.pos[1]-goal[1])**2)
         return self.fitness
     def kill(self):
         self.is_dead = True

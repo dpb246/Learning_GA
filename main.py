@@ -8,7 +8,7 @@ import physics
 pygame.init()
 #Settings
 max_steps = 450
-goal = (900, 295) #(x, y)
+goal = (900, 600) #(x, y)
 screen_size = (1000,720) #(x, y)
 spawn_point = [30, 30] #Spawn point for circles
 # create a surface on screen
@@ -16,7 +16,7 @@ screen = pygame.display.set_mode(screen_size)
 engine = Render_Engine(screen, goal, screen_size)
 physics = physics.physics(goal, engine)
 pop = population.population(spawn_point, population_size=500, steps=max_steps)
-walls = [[350, 300, 10, 600], [350, 0, 10, 290], [700, 300, 10, 600], [700, 0, 10, 290]] #Walls: format [x, y, x_size, y_size]
+walls = [[500, 300, 10, 600], [600, 0, 10, 500]] #Walls: format [x, y, x_size, y_size]
 '''
 WALL SETUPS:
           |
