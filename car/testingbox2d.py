@@ -1,15 +1,6 @@
 #!/usr/bin/env python
 """
-An attempt at some simple, self-contained pygame-based examples.
-Example 02
-In short:
-One static body:
-    + One fixture: big polygon to represent the ground
-Two dynamic bodies:
-    + One fixture: a polygon
-    + One fixture: a circle
-And some drawing code that extends the shape classes.
-kne
+An attempt at some basic tests of the required functionality
 """
 import pygame
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
@@ -25,6 +16,7 @@ PPM = 20.0  # pixels per meter
 TARGET_FPS = 60
 TIME_STEP = 1.0 / TARGET_FPS
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
+SIDE_SCROLL = 0
 
 # --- pygame setup ---
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -40,7 +32,15 @@ ground_body = world.CreateStaticBody(position=(0, 0), shapes=polygonShape(box=(5
 
 # Create a couple dynamic bodies
 box = world.CreateDynamicBody(
-    position=(15, 4),
+    position=(25, 4),
+    fixtures=b2FixtureDef(
+        shape=b2PolygonShape(box=(2.5, 1)),
+        friction=0.2,
+        density=1
+    )
+)
+box2 = world.CreateDynamicBody(
+    position=(30, 4),
     fixtures=b2FixtureDef(
         shape=b2PolygonShape(box=(2.5, 1)),
         friction=0.2,
@@ -48,7 +48,7 @@ box = world.CreateDynamicBody(
     )
 )
 wheel = world.CreateDynamicBody(
-    position=(16.25, 3),
+    position=(26.25, 3),
     fixtures=b2FixtureDef(
         shape=b2CircleShape(radius=1),
         friction=0.3,
@@ -56,7 +56,7 @@ wheel = world.CreateDynamicBody(
     )
 )
 wheel2 = world.CreateDynamicBody(
-    position=(13.75, 3),
+    position=(23.75, 3),
     fixtures=b2FixtureDef(
         shape=b2CircleShape(radius=1),
         friction=0.3,
@@ -94,13 +94,13 @@ colors = {
 
 def my_draw_polygon(polygon, body, fixture):
     vertices = [(body.transform * v) * PPM for v in polygon.vertices]
-    vertices = [(v[0], SCREEN_HEIGHT - v[1]) for v in vertices]
+    vertices = [(v[0]-SIDE_SCROLL, SCREEN_HEIGHT - v[1]) for v in vertices]
     pygame.draw.polygon(screen, colors[body.type], vertices)
 polygonShape.draw = my_draw_polygon
 
 def my_draw_circle(circle, body, fixture):
     position = body.transform * circle.pos * PPM
-    position = (position[0], SCREEN_HEIGHT - position[1])
+    position = (position[0]-SIDE_SCROLL, SCREEN_HEIGHT - position[1])
     pygame.draw.circle(screen, colors[body.type], [int(
         x) for x in position], int(circle.radius * PPM))
     # Note: Python 3.x will enforce that pygame get the integers it requests,
@@ -126,6 +126,9 @@ while running:
     # Make Box2D simulate the physics of our world for one step.
     world.Step(TIME_STEP, 10, 10)
 
+    #Have screen follow the car
+    SIDE_SCROLL = (box.position[0]) * PPM - SCREEN_WIDTH // 2
+    print(SIDE_SCROLL)
     # Flip the screen and try to keep at the target FPS
     pygame.display.flip()
     clock.tick(TARGET_FPS)
