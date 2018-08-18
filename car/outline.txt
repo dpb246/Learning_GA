@@ -1,0 +1,30 @@
+using pygame for display
+using pybox2d for physics
+
+fitness based on distance and speed
+kill once speed is 0m/s for ____ frames
+
+Time Limit or limit track length?
+
+NEED:
+draw based on positions and orientations from physics simulation
+follow car that is the farthest at that instant
+generate model car from genome
+population
+individuals
+genome with mutation functions
+Generate a track for the cars and display (change every generation?)
+
+NICE:
+Toggleable ability to run at faster speed; without displaying and without changing physics simulation
+
+
+Genome:
+Wheels:
+Wheel size
+Wheel position
+Powered
+Friction
+Body
+Density
+Size

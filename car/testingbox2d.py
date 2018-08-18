@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 An attempt at some simple, self-contained pygame-based examples.
 Example 02
@@ -15,7 +14,7 @@ kne
 import pygame
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
 
-import Box2D  # The main library
+from Box2D import * # The main library
 # Box2D.b2 maps Box2D.b2Vec2 to vec2 (and so on)
 from Box2D.b2 import (world, polygonShape, circleShape, staticBody, dynamicBody)
 
@@ -37,21 +36,55 @@ clock = pygame.time.Clock()
 world = world(gravity=(0, -10), doSleep=True)
 
 # And a static body to hold the ground shape
-ground_body = world.CreateStaticBody(
-    position=(0, 0),
-    shapes=polygonShape(box=(50, 1)),
-)
+ground_body = world.CreateStaticBody(position=(0, 0), shapes=polygonShape(box=(50, 1)))
 
 # Create a couple dynamic bodies
-body = world.CreateDynamicBody(position=(20, 45))
-circle = body.CreateCircleFixture(radius=0.5, density=1, friction=0.3)
-
-body = world.CreateDynamicBody(position=(30, 45), angle=35)
-box = body.CreatePolygonFixture(box=(2, 1), density=1, friction=0.3)
-
-body = world.CreateDynamicBody(position=(10, 45), angle=-35)
-box2 = body.CreatePolygonFixture(box=(2, 3), density=1, friction=0.3)
-
+box = world.CreateDynamicBody(
+    position=(15, 4),
+    fixtures=b2FixtureDef(
+        shape=b2PolygonShape(box=(2.5, 1)),
+        friction=0.2,
+        density=1
+    )
+)
+wheel = world.CreateDynamicBody(
+    position=(16.25, 3),
+    fixtures=b2FixtureDef(
+        shape=b2CircleShape(radius=1),
+        friction=0.3,
+        density=1
+    )
+)
+wheel2 = world.CreateDynamicBody(
+    position=(13.75, 3),
+    fixtures=b2FixtureDef(
+        shape=b2CircleShape(radius=1),
+        friction=0.3,
+        density=1
+    )
+)
+spring = world.CreateWheelJoint(
+            bodyA=box,
+            bodyB=wheel,
+            anchor=wheel.position,
+            axis=(0.0, 1.0),
+            motorSpeed=10.0,
+            maxMotorTorque=50,
+            enableMotor=True,
+            frequencyHz=10,
+            dampingRatio=0.7
+        )
+spring2 = world.CreateWheelJoint(
+            bodyA=box,
+            bodyB=wheel2,
+            anchor=wheel2.position,
+            axis=(0.0, 1.0),
+            motorSpeed=10.0,
+            maxMotorTorque=50,
+            enableMotor=True,
+            frequencyHz=10,
+            dampingRatio=0.7
+        )
 colors = {
     staticBody: (255, 255, 255, 255),
     dynamicBody: (127, 127, 127, 255),
@@ -64,7 +97,6 @@ def my_draw_polygon(polygon, body, fixture):
     vertices = [(v[0], SCREEN_HEIGHT - v[1]) for v in vertices]
     pygame.draw.polygon(screen, colors[body.type], vertices)
 polygonShape.draw = my_draw_polygon
-
 
 def my_draw_circle(circle, body, fixture):
     position = body.transform * circle.pos * PPM
