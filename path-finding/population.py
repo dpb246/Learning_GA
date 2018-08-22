@@ -23,8 +23,12 @@ class population:
     def get_positions(self):
         return self.positions
     def calc_fitness_scores(self, goal):
+        print("called bad")
         self.fitness_scores = [p.get_fitness(goal) for p in self.individuals]
         self.best_person(goal)
+        return self.fitness_scores
+    def update_fitness(self, goal, frame_num):
+        self.fitness_scores = [i.update_fitness(goal, frame_num) for i in self.individuals]
         return self.fitness_scores
     def everyone_dead(self):
         for person in self.individuals:
@@ -33,7 +37,7 @@ class population:
         return True
     def best_person(self, goal):
         best_index= 0
-        best_score = 0 #Smaller score means closer and better
+        best_score = 0 #bigger score means closer and better
         for index, score in enumerate(self.fitness_scores):
             if score > best_score:
                 best_score = score
@@ -53,7 +57,7 @@ class population:
         return None
     def selection(self, goal):
         self.next_gen = [person(self.spawn_point, self.steps) for i in range(self.population_size)]
-        self.calc_fitness_scores(goal)
+        #self.calc_fitness_scores(goal)
         best_person = self.best_person(goal)
         self.next_gen[0] = best_person.child()
         for i in range(1, len(self.next_gen)):

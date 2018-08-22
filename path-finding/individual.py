@@ -22,6 +22,16 @@ class person(object):
         else:
             self.fitness = 1/((self.pos[0]-goal[0])**2 + (self.pos[1]-goal[1])**2)
         return self.fitness
+    def eat(self):
+        if not self.is_dead:
+            if self.win:
+                self.fitness += (self.brain.number_of_steps - self.brain.counter)**2
+            else:
+                distance = (self.pos[0]-goal[0])**2 + (self.pos[1]-goal[1])**2
+                self.fitness += 2**(-distance**0.2) #scale with time
+            return self.fitness**2/self.brain.counter * 10
+        else:
+            return self.fitness/self.brain.counter * 10
     def kill(self):
         self.is_dead = True
         #print("killed")
@@ -31,6 +41,7 @@ class person(object):
     def reset(self):
         self.brain.reset()
         self.is_dead = False
+        self.fitness = 0
         self.win = False
     def active(self):
         return self.is_dead or self.win

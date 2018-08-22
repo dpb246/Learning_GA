@@ -27,9 +27,36 @@ clock = pygame.time.Clock()
 # Create the world
 world = world(gravity=(0, -10), doSleep=True)
 
+ground = world.CreateStaticBody(
+    shapes=b2EdgeShape(vertices=[(-20, 0), (20, 0)])
+)
+
+x, y1, dx = 20, 0, 5
+vertices = [0.25, 1, 4, 0, 0, -1, -2, -2, -1.25, 0]
+for y2 in vertices * 2:  # iterate through vertices twice
+    ground.CreateEdgeFixture(
+        vertices=[(x, y1), (x + dx, y2)],
+        density=0,
+        friction=0.6,
+    )
+    y1 = y2
+    x += dx
+
+x_offsets = [0, 80, 40, 20, 40]
+x_lengths = [40, 40, 10, 40, 0]
+y2s = [0, 0, 5, 0, 20]
+
+for x_offset, x_length, y2 in zip(x_offsets, x_lengths, y2s):
+    x += x_offset
+    ground.CreateEdgeFixture(
+        vertices=[(x, 0), (x + x_length, y2)],
+        density=0,
+        friction=0.6,
+    )
+
 # And a static body to hold the ground shape
 ground_body = world.CreateStaticBody(position=(0, 0), shapes=polygonShape(box=(50, 1)))
-
+ground_body2 = world.CreateStaticBody(position=(-50, 2), shapes=polygonShape(box=(1, 1)))
 # Create a couple dynamic bodies
 box = world.CreateDynamicBody(
     position=(25, 4),
@@ -68,7 +95,7 @@ spring = world.CreateWheelJoint(
             bodyB=wheel,
             anchor=wheel.position,
             axis=(0.0, 1.0),
-            motorSpeed=10.0,
+            motorSpeed=40.0,
             maxMotorTorque=50,
             enableMotor=True,
             frequencyHz=10,
@@ -107,6 +134,7 @@ def my_draw_circle(circle, body, fixture):
     #       and it will not convert from float.
 circleShape.draw = my_draw_circle
 
+b2EdgeShape.draw = my_draw_polygon
 # --- main game loop ---
 
 running = True
@@ -121,6 +149,7 @@ while running:
     # Draw the world
     for body in world.bodies:
         for fixture in body.fixtures:
+            #continue
             fixture.shape.draw(body, fixture)
 
     # Make Box2D simulate the physics of our world for one step.
