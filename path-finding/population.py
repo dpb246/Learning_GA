@@ -2,11 +2,12 @@ from individual import *
 import time
 import random
 from copy import deepcopy
+from food import food
 '''
 Population of individuals, contains all the evolutionary logic
 '''
 class population:
-    def __init__(self, spawn_point, population_size=10, steps=100):
+    def __init__(self, spawn_point, food, population_size=10, steps=100):
         self.individuals = [person(spawn_point, steps) for i in range(population_size)]
         self.positions = []
         self.fitness_scores = []
@@ -15,6 +16,7 @@ class population:
         self.spawn_point = spawn_point
         self.population_size = population_size
         self.steps = steps
+        self.food = food
     def move(self):
         self.positions = []
         for i in range(len(self.individuals)):
@@ -27,8 +29,8 @@ class population:
         self.fitness_scores = [p.get_fitness(goal) for p in self.individuals]
         self.best_person(goal)
         return self.fitness_scores
-    def update_fitness(self, goal, frame_num):
-        self.fitness_scores = [i.update_fitness(goal, frame_num) for i in self.individuals]
+    def update_fitness(self):
+        self.fitness_scores = [i.eat(self.food.get_food(i.pos)) for i in self.individuals]
         return self.fitness_scores
     def everyone_dead(self):
         for person in self.individuals:
@@ -52,7 +54,7 @@ class population:
         running_sum = 0
         for i in self.individuals:
             running_sum += i.fitness
-            if running_sum > random_number:
+            if running_sum >= random_number:
                 return i
         return None
     def selection(self, goal):
