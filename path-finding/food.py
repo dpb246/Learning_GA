@@ -9,7 +9,7 @@ class food:
 
     def calc(self, row):
         for x in range(self.x_size):
-            distance = (x-self.goal[0])**2 + (row-self.goal[1])**2
+            distance = (x*5-self.goal[0])**2 + (row*5-self.goal[1])**2
             self.map[row][x] += 1000 * 2**(-distance**0.2) #scale with time
     def worker(self):
         while True:
