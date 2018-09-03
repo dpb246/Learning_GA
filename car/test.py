@@ -1,6 +1,16 @@
 '''
-An attempt at some basic tests of the required functionality
+THIS TESTS:
+making cars from randomly generated ones
+stall detection
+
+KNOWN ISSUES:
+Improve random generation
+
+TODO:
+Add random terrain addition
 '''
+from ult import *
+from car_data import *
 import pygame
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
 import random
@@ -20,7 +30,7 @@ YOFFSET = SCREEN_HEIGHT
 
 # --- pygame setup ---
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Simple car demo')
+pygame.display.set_caption('TESTS')
 clock = pygame.time.Clock()
 
 # --- pybox2d world setup ---
@@ -29,10 +39,13 @@ world = world(gravity=(0, -10), doSleep=True)
 
 # The ground -- create some terrain
 ground = world.CreateStaticBody(
-    shapes=b2EdgeShape(vertices=[(-20, 0), (40, 0)])
+    shapes=b2EdgeShape(vertices=[(-20, 0), (10, 0)])
 )
-
-x, y1, dx = 40, 0, 4
+blocker = world.CreateStaticBody( #Prevents cars from driving too far to the left
+    position=(-18, 10),
+    shapes=b2PolygonShape(box=(2,10))
+)
+x, y1, dx = 10, 0, 4
 vertices = [0.25, 1, 4, 0, 0, -1, -2, -2, -1.25, 0]
 def add_ground():
     global x, y1, dx
@@ -46,53 +59,48 @@ def add_ground():
         y1 = y2
         x += dx
 add_ground()
+
+c = car()
+c.wheels[0].pos = point(1.25, -1)
+c.wheels[1].pos = point(-1.25, -1)
+c.wheels[0].radius = 1
+c.wheels[1].radius = 1
+# c.randomize()
+print(c)
+spawn = point(0, 4)
 # Create a car with 2 wheels
 box = world.CreateDynamicBody(
-    position=(25, 4),
+    position=spawn(),
     fixtures=b2FixtureDef(
-        shape=b2PolygonShape(box=(2.5, 1)),
-        friction=0.2,
-        density=1
+        shape=b2PolygonShape(box=c.body.box),
+        friction=c.body.friction,
+        density=c.body.density
     )
 )
-wheel = world.CreateDynamicBody(
-    position=(27.5, 3),
-    fixtures=b2FixtureDef(
-        shape=b2CircleShape(radius=1),
-        friction=1,
-        density=1
-    )
-)
-wheel2 = world.CreateDynamicBody(
-    position=(22.5, 3),
-    fixtures=b2FixtureDef(
-        shape=b2CircleShape(radius=1),
-        friction=1,
-        density=1
-    )
-)
-spring = world.CreateWheelJoint(
-            bodyA=box,
-            bodyB=wheel,
-            anchor=wheel.position,
-            axis=(0.0, 1.0),
-            motorSpeed=-40.0,
-            maxMotorTorque=50,
-            enableMotor=True,
-            frequencyHz=10,
-            dampingRatio=0.7
+wheels = []
+springs = []
+for w in c.wheels:
+    wheel = world.CreateDynamicBody(
+        position=(spawn+w.pos)(),
+        fixtures=b2FixtureDef(
+            shape=b2CircleShape(radius=w.radius),
+            friction=w.friction,
+            density=w.density
         )
-spring2 = world.CreateWheelJoint(
-            bodyA=box,
-            bodyB=wheel2,
-            anchor=wheel2.position,
-            axis=(0.0, 1.0),
-            motorSpeed=-10.0,
-            maxMotorTorque=50,
-            enableMotor=True,
-            frequencyHz=10,
-            dampingRatio=0.7
-        )
+    )
+    wheels.append(wheel)
+    spring = world.CreateWheelJoint(
+                bodyA=box,
+                bodyB=wheel,
+                anchor=wheel.position,
+                axis=(0.0, 1.0),
+                motorSpeed=w.motorSpeed,
+                maxMotorTorque=50,
+                enableMotor=True,
+                frequencyHz=w.frequencyHz,
+                dampingRatio=w.dampingRatio
+            )
+    springs.append(spring)
 
 #DRAWING
 colors = {
@@ -123,6 +131,8 @@ edgeShape.draw = _draw_edge
 
 # --- main game loop ---
 running = True
+stall_count = 0
+last_pos = point(0, 0)
 while running:
     # Check the event queue
     for event in pygame.event.get():
@@ -137,8 +147,20 @@ while running:
             #continue
             fixture.shape.draw(body, fixture)
 
+    #Check for stall
+    if stall_count > 10:
+        print("OVER")
+    elif abs(last_pos-point(*box.position)) < 0.0005: #Could make this a smaller value
+        print("stall")
+        stall_count += 1
+    else:
+        print("clear")
+        stall_count = 0
+    last_pos = point(*box.position)
+
     # Make Box2D simulate the physics of our world for one step.
     world.Step(TIME_STEP, 10, 10)
+    #Check if car is about to run out of ground to drive on
     if x < box.position[0]+30:
         add_ground()
     #Have screen follow the car
