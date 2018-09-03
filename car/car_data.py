@@ -15,7 +15,7 @@ class wheel:
         self.dampingRatio = dampingRatio
     #IDEA Wheel size limited such that the wheels don't hit?
     def randomize(self, box):
-        self.radius = clamp(0.1, random.random()*3, 3) #wheels between 0.1m and 3m
+        self.radius = clamp(0.1, random.random()*2, 2) #wheels between 0.1m and 3m
         self.friction = random.random() #friction is between 0 to 1
         self.density = random.random() #density is a value between 0 to 1
         self.motorSpeed = random.random()*40*-1 #Set from 0 to 40, flip so car travels in positive direction
