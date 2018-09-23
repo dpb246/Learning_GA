@@ -20,6 +20,7 @@ import random
 from Box2D import * # The main library
 # Box2D.b2 maps Box2D.b2Vec2 to vec2 (and so on)
 from Box2D.b2 import (world, polygonShape, circleShape, edgeShape, staticBody, dynamicBody)
+import UIEngine
 
 # --- constants ---
 # Box2D deals with meters, but we want to display pixels,
@@ -32,9 +33,17 @@ XOFFSET = 0
 YOFFSET = SCREEN_HEIGHT
 
 # --- pygame setup ---
+pygame.init()
+pygame.font.init()
+
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('TESTS')
 clock = pygame.time.Clock()
+
+#UI
+UI = UIEngine.UIScreen()
+font = pygame.font.SysFont('Arial', 30)
+UI.add_text((10, 10), font, "DEMO")
 
 # --- pybox2d world setup ---
 # Create the world
@@ -53,7 +62,7 @@ vertices = [0.25, 1, 4, 0, 0, -1, -2, -2, -1.25, 0]
 def add_ground():
     global x, y1, dx
     print("Adding")
-    for y2 in [i+random.random() for i in vertices*2]:  # iterate through vertices multiple times
+    for y2 in [i+random.random()+random.random() for i in vertices*2]:  # iterate through vertices multiple times
         ground.CreateEdgeFixture(
             vertices=[(x, y1), (x + dx, y2)],
             density=0,
@@ -117,18 +126,18 @@ car1.wheels[0].pos = point(1.25, -1)
 car1.wheels[1].pos = point(-1.25, -1)
 car1.wheels[0].radius = 1
 car1.wheels[1].radius = 1
-print("Car 1:\n",car1)
+print("Car 1:\n"+str(car1))
 make_car(car1)
 car2 = car()
 car2.wheels[0].pos = point(1.5, -1)
 car2.wheels[1].pos = point(-1.5, -1)
 car2.wheels[0].radius = 1.5
 car2.wheels[1].radius = 1.5
-print("Car 2:\n",car2)
+print("Car 2:\n"+str(car2))
 make_car(car2)
 car3 = car()
 car3.randomize()
-print("Car 3:\n",car3)
+print("Car 3:\n"+str(car3))
 make_car(car3)
 #Finds and returns the distance and index of the car that has travelled the farthest in the positive x direction
 def find_farthest(cars):
@@ -177,8 +186,10 @@ while running:
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             # The user closed the window or pressed escape
             running = False
-
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            UI.clicks(pygame.mouse.get_pos()) #Check if any of the buttons were pressed
     screen.fill((0, 0, 0, 0))
+    UI.draw(screen)
     # Draw the world
     for body in world.bodies:
         for fixture in body.fixtures:
