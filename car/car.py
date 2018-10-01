@@ -4,7 +4,9 @@ import pygame
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
 from Box2D import * # The main library
 from Box2D.b2 import (world, polygonShape, circleShape, edgeShape, staticBody, dynamicBody)
-
+'''
+Stores physical objects linked to car
+'''
 class car:
     def __init__(self, world):
         self.spawn = point(0, 4)

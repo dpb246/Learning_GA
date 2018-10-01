@@ -1,6 +1,8 @@
 #DRAWING
 import pygame
-
+'''
+The debug draw functions and some data for them
+'''
 class draw:
     def __init__(self, screen=None):
         self.screen = screen

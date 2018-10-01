@@ -1,7 +1,9 @@
 from Box2D import * # The main library
 from Box2D.b2 import (world, polygonShape, circleShape, edgeShape, staticBody, dynamicBody)
 import random
-
+'''
+Holds ground and related functions
+'''
 class level:
     def __init__(self, world=None):
         self.world = world

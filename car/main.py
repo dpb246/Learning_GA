@@ -1,15 +1,12 @@
 '''
-THIS TESTS:
-making cars from randomly generated ones
-stall detection
-
 KNOWN ISSUES:
-Improve random generation
-Improve stall detection, gets stuck cycling on ramp
-Camera will teleport around, # IDEA: Add smooth transition to new car
+random generation
+Camera will teleport around, # IDEA: Add smooth transition to new car, somewhat fixed with
 
 TODO:
-Add random terrain addition
+Add more random terrain rather than scripted
+Add all genetic functionality
+Move main loop into genetic loop
 '''
 from ult import *
 from car_data import *
@@ -67,7 +64,7 @@ polygonShape.draw = graphics._draw_polygon
 circleShape.draw = graphics._draw_circle
 edgeShape.draw = graphics._draw_edge
 
-# --- main game loop ---
+# --- main loop ---
 running = True
 start_time = current_time()
 last_pos = point(0, 0)
