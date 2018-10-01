@@ -54,7 +54,7 @@ class body:
 '''
 Use relative positions
 '''
-class car:
+class car_data:
     def __init__(self):
         self.wheel_count = 2
         self.wheels = [wheel() for i in range(self.wheel_count)]

@@ -1,6 +1,11 @@
 '''
 Holds various methods and classes used in multiple files
 '''
+import time
+
+#milliseconds
+current_time = lambda: int(round(time.time() * 1000))
+
 #Clamp value between a min and max
 def clamp(min, value, max):
     return sorted([min, value, max])[1]

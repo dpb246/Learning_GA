@@ -15,7 +15,7 @@ class textObj:
     def __init__(self, location, font, text, textcolour = WHITE, bgcolour = BLACK):
         self._font = font
         self._check_coll = False
-        self._text = " " + text + " " #Yes, it is hard coded to pad it using spaces :)
+        self._text = " " + str(text) + " " #Yes, it is hard coded to pad it using spaces :)
         self._location = location
         self._textcolour = textcolour
         self._bgcolour = bgcolour
@@ -26,8 +26,9 @@ class textObj:
             self._surface = None #failed to init right
     def update(self, **kwargs):
         self.__dict__.update(kwargs)
-        if self._text[0] != " ": #Not the safest way to check if it needs pading, but simple
-            self._text = " " + self._text + " "
+        self._text = str(self._text)
+        if self._text[0] != " ":
+            self._text = " " + str(self._text) + " "#Assume padding
         self._surface = self._font.render(self._text, True, self._textcolour, self._bgcolour)
         self._surface = self._surface.convert_alpha()
         self._boundingbox = pygame.Rect(self._location, self._font.size(self._text))
