@@ -8,12 +8,15 @@ Add more random terrain rather than scripted
 Add all genetic functionality
 Move main loop into genetic loop
 '''
+import random
+#List of good seeds: 1,
+random.seed(100) #Seed right away to allow code to run below with seeded random module
+
 from ult import *
 from car_data import *
 import pygame
 import time
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
-import random
 from Box2D import * # The main library
 from Box2D.b2 import (world, polygonShape, circleShape, edgeShape, staticBody, dynamicBody)
 import UIEngine
@@ -54,7 +57,7 @@ world = world(gravity=(0, -10), doSleep=True)
 stage = level(world=world)
 
 #all the cars
-population = pop(physworld=world)
+population = pop(physworld=world, size=10)
 population.make_cars()
 cars = population.cars
 
@@ -65,40 +68,46 @@ circleShape.draw = graphics._draw_circle
 edgeShape.draw = graphics._draw_edge
 
 # --- main loop ---
+draw = True
 running = True
-start_time = current_time()
-last_pos = point(0, 0)
-while current_time()-start_time < MAX_TIME*1000 and running:
-    # Check the event queue
-    for event in pygame.event.get():
-        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-            # The user closed the window or pressed escape
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            UI.clicks(pygame.mouse.get_pos()) #Check if any of the buttons were pressed
-    screen.fill((0, 0, 0, 0))
+while running:
+    start_time = current_time()
+    while current_time()-start_time < MAX_TIME*1000 and running:
+        # Check the event queue
+        for event in pygame.event.get():
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                # The user closed the window or pressed escape
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                UI.clicks(pygame.mouse.get_pos()) #Check if any of the buttons were pressed
+        # Make Box2D simulate the physics of our world for one step.
+        world.Step(TIME_STEP, 10, 10)
+        #Find the car that has travelled the farthest in the x+ direction
+        farthest_dist, index = population.find_farthest()
+        #Check if car is about to run out of ground to drive on
+        stage.add_ground_if_needed(farthest_dist)
+        if draw:
+            screen.fill((0, 0, 0, 0))
+            count_down.update(_text="{0:0.1f}".format((MAX_TIME*1000-(current_time()-start_time))/1000))
+            UI.draw(screen)
+            # Draw the world
+            for body in world.bodies:
+                for fixture in body.fixtures:
+                    fixture.shape.draw(body, fixture)
 
-    count_down.update(_text="{0:0.1f}".format((MAX_TIME*1000-(current_time()-start_time))/1000))
+            #Have screen follow the car
+            s.XOFFSET = (-farthest_dist) * s.PPM + SCREEN_WIDTH // 2
+            s.YOFFSET = (cars[index].body.position[1]) * s.PPM + SCREEN_HEIGHT // 2
+            # Flip the screen and try to keep at the target FPS
+            pygame.display.flip()
+            clock.tick(TARGET_FPS)
+        else:
+            print(farthest_dist)
 
-    UI.draw(screen)
-    # Draw the world
-    for body in world.bodies:
-        for fixture in body.fixtures:
-            fixture.shape.draw(body, fixture)
-    # Make Box2D simulate the physics of our world for one step.
-    world.Step(TIME_STEP, 10, 10)
-
-    #Find the car that has travelled the farthest in the x+ direction
-    farthest_dist, index = population.find_farthest()
-    #Have screen follow the car
-    s.XOFFSET = (-farthest_dist) * s.PPM + SCREEN_WIDTH // 2
-    s.YOFFSET = (cars[index].body.position[1]) * s.PPM + SCREEN_HEIGHT // 2
-
-    #Check if car is about to run out of ground to drive on
-    stage.add_ground_if_needed(farthest_dist)
-    # Flip the screen and try to keep at the target FPS
-    pygame.display.flip()
-    clock.tick(TARGET_FPS)
+    for c in population.cars:
+        c.randomize()
+        c.update_to_new_data()
+    stage.reset()
 
 pygame.quit()
 print('Done!')

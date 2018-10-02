@@ -20,14 +20,13 @@ class pop:
         self.spawn = spawn
         self.size = size
         self.world = physworld
-        self.car_data = [car_data() for i in range(size)]
-        for d in self.car_data:
-            d.randomize()
         self.cars = [car(physworld) for i in range(size)]
+        for c in self.cars:
+            c.randomize()
     #Updates physical models of the cars to the new data
     def make_cars(self):
-        for c, data in zip(self.cars, self.car_data):
-            c.make_car(data)
+        for c in self.cars:
+            c.make_car(c.data)
     #Finds and returns the distance and index of the car that has travelled the farthest in the positive x direction
     def find_farthest(self):
         max_dis = 0

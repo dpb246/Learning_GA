@@ -18,6 +18,11 @@ class level:
         self.x, self.y1, self.dx = 10, 0, 4
         self.vertices = [0.25, 1, 4, 0, 0, -1, -2, -2, -1.25, 0]
         self.add_ground()
+    def reset(self):
+        print("reseting world")
+        self.world.DestroyBody(self.ground)
+        self.world.DestroyBody(self.blocker)
+        self.__init__(world = self.world)
     def add_ground_if_needed(self, farthest_dist):
         if self.x < farthest_dist+30:
             self.add_ground()

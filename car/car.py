@@ -11,6 +11,15 @@ class car:
     def __init__(self, world):
         self.spawn = point(0, 4)
         self.world = world
+        self.data = car_data()
+        self.make_car(self.data)
+    def randomize(self):
+        self.data.randomize()
+    def update_to_new_data(self):
+        self.world.DestroyBody(self.body)
+        for c in self.wheels:
+            self.world.DestroyBody(c)
+        self.make_car(self.data)
     def make_car(self, c):
         # Create a car with 2 wheels
         self.body = self.world.CreateDynamicBody(
