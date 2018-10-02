@@ -1,6 +1,7 @@
 from car import car
 from car_data import car_data
 from ult import *
+import random
 '''
 Working car setups
 
@@ -38,8 +39,18 @@ class pop:
         return max_dis, index
     def calculate_fitness(self):
         self.max_fitness = 0
+        self.sum_of_fitness = 0
         for c in self.cars:
             fitness = c.calc_fitness()
+            self.sum_of_fitness += fitness
             if fitness > self.max_fitness:
                 self.max_fitness = fitness
         return self.max_fitness
+    def pick_parent(self):
+        number = random.random() * self.sum_of_fitness
+        for c in self.cars:
+            number -= c.fitness
+            if number <= 0: break
+        return c
+    def next_gen(self):
+        pass

@@ -17,6 +17,8 @@ class car:
     def calc_fitness(self):
         self.fitness = (self.body.position.x - self.spawn.x)**2 #Squared distance travelled
         return self.fitness
+    def __str__(self):
+        return "Fitness: " + str(self.fitness) + "\n" + str(self.data)
     def randomize(self):
         self.data.randomize()
     def update_to_new_data(self):
