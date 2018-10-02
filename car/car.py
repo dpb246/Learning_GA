@@ -12,7 +12,11 @@ class car:
         self.spawn = point(0, 4)
         self.world = world
         self.data = car_data()
+        self.fitness = 0
         self.make_car(self.data)
+    def calc_fitness(self):
+        self.fitness = (self.body.position.x - self.spawn.x)**2 #Squared distance travelled
+        return self.fitness
     def randomize(self):
         self.data.randomize()
     def update_to_new_data(self):

@@ -36,3 +36,10 @@ class pop:
                 max_dis = self.cars[i].body.position.x
                 index = i
         return max_dis, index
+    def calculate_fitness(self):
+        self.max_fitness = 0
+        for c in self.cars:
+            fitness = c.calc_fitness()
+            if fitness > self.max_fitness:
+                self.max_fitness = fitness
+        return self.max_fitness

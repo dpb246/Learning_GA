@@ -33,6 +33,7 @@ class textObj:
         self._surface = self._surface.convert_alpha()
         self._boundingbox = pygame.Rect(self._location, self._font.size(self._text))
     def remove(self):
+        del self._surface
         self._surface = None #Set to be deleted next draw cycle
 
 #Expands on text object to add click functionality

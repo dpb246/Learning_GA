@@ -19,7 +19,6 @@ class level:
         self.vertices = [0.25, 1, 4, 0, 0, -1, -2, -2, -1.25, 0]
         self.add_ground()
     def reset(self):
-        print("reseting world")
         self.world.DestroyBody(self.ground)
         self.world.DestroyBody(self.blocker)
         self.__init__(world = self.world)

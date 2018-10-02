@@ -25,11 +25,12 @@ from population import pop
 from level import level
 import graphics
 from graphics import s #Holds a bunch of global screen variables
+import objgraph
 
 # --- constants ---
 # Box2D deals with meters, but we want to display pixels,
 # so define a conversion factor:
-TARGET_FPS = 240
+TARGET_FPS = 400
 MAX_TIME = 10.0
 TIME_STEP = 1.0 / 60
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
@@ -57,7 +58,8 @@ world = world(gravity=(0, -10), doSleep=True)
 stage = level(world=world)
 
 #all the cars
-population = pop(physworld=world, size=10)
+population = pop(physworld=world, size=25)
+print("Initializing a Population with {} cars".format(population.size))
 population.make_cars()
 cars = population.cars
 
@@ -70,9 +72,14 @@ edgeShape.draw = graphics._draw_edge
 # --- main loop ---
 draw = True
 running = True
+# loop_count = 0
 while running:
-    start_time = current_time()
-    while current_time()-start_time < MAX_TIME*1000 and running:
+    physics_ticks = 0 #This is so each simulation gets the same amount of simulated time, although this means physics speed depends on frame_rate
+    # objgraph.show_most_common_types(limit=40)
+    # print("===============================", loop_count)
+    # loop_count += 1
+    while physics_ticks <= MAX_TIME/TIME_STEP and running:
+        physics_ticks += 1
         # Check the event queue
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -88,7 +95,7 @@ while running:
         stage.add_ground_if_needed(farthest_dist)
         if draw:
             screen.fill((0, 0, 0, 0))
-            count_down.update(_text="{0:0.1f}".format((MAX_TIME*1000-(current_time()-start_time))/1000))
+            count_down.update(_text="{0:0.1f}".format(MAX_TIME-physics_ticks*TIME_STEP))
             UI.draw(screen)
             # Draw the world
             for body in world.bodies:
@@ -103,7 +110,7 @@ while running:
             clock.tick(TARGET_FPS)
         else:
             print(farthest_dist)
-
+    print("The Fittest car was {}".format(population.calculate_fitness()))
     for c in population.cars:
         c.randomize()
         c.update_to_new_data()
