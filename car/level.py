@@ -26,7 +26,8 @@ class level:
         if self.x < farthest_dist+30:
             self.add_ground()
     def add_ground(self):
-        for y2 in [i+random.random()+random.random() for i in self.vertices*2]:  # iterate through vertices multiple times
+        #i+random.random()+random.random()
+        for y2 in [0 for i in self.vertices*2]:  # iterate through vertices multiple times
             self.ground.CreateEdgeFixture(
                 vertices=[(self.x, self.y1), (self.x + self.dx, y2)],
                 density=0,

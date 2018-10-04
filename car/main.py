@@ -11,7 +11,7 @@ Move main loop into genetic loop
 '''
 import random
 #List of good seeds: 1,
-random.seed(100) #Seed right away to allow code to run below with seeded random module
+random.seed(103) #Seed right away to allow code to run below with seeded random module
 from ult import *
 from car_data import *
 import pygame
@@ -30,7 +30,7 @@ import objgraph
 # --- constants ---
 # Box2D deals with meters, but we want to display pixels,
 # so define a conversion factor:
-TARGET_FPS = 400
+TARGET_FPS = 120
 MAX_TIME = 10.0
 TIME_STEP = 1.0 / 60
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
@@ -58,7 +58,7 @@ world = world(gravity=(0, -10), doSleep=True)
 stage = level(world=world)
 
 #all the cars
-population = pop(physworld=world, size=50)
+population = pop(physworld=world, size=25)
 print("Initializing a Population with {} cars".format(population.size))
 
 #Config drawing
@@ -70,6 +70,7 @@ edgeShape.draw = graphics._draw_edge
 # --- main loop ---
 draw = True
 running = True
+gen_count = 0
 # loop_count = 0
 while running:
     physics_ticks = 0 #This is so each simulation gets the same amount of simulated time, although this means physics speed depends on frame_rate
@@ -104,13 +105,13 @@ while running:
             # Flip the screen and try to keep at the target FPS
             pygame.display.flip()
             clock.tick(TARGET_FPS)
-        else:
-            print(farthest_dist)
-    print("The Fittest car was {}".format(population.calculate_fitness()))
+    print("The Fittest car of generation {} scored {:0.3f}".format(gen_count, population.calculate_fitness()))
     population.next_gen()
-    # for c in population.cars:
-    #     c.randomize()
-    #     c.update_to_new_data()
+    gen_count += 1
+    if gen_count % 10 != 0:
+        draw = False
+    else:
+        draw = True
     stage.reset()
 
 pygame.quit()

@@ -14,6 +14,7 @@ class car:
         self.world = world
         self.data = car_data()
         self.fitness = 0
+        self.mutate_rate = 0.1
         self.make_car()
     def calc_fitness(self):
         self.fitness = (self.body.position.x - self.spawn.x)**2 #Squared distance travelled
@@ -24,12 +25,13 @@ class car:
         self.world.DestroyBody(self.body)
         for c in self.wheels:
             self.world.DestroyBody(c)
-    def randomize(self):
-        self.data.randomize()
+    def randomize(self, change=None):
+        self.data.randomize(change=change)
     def mutate(self):
         child = car(self.world)
         child.data = deepcopy(self.data)
-        child.randomize()
+        what = [random.random() < self.mutate_rate for i in range(child.data.number_of_genes)]
+        child.randomize(change=what)
         return child
     def update_to_new_data(self):
         self.world.DestroyBody(self.body)

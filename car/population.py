@@ -55,6 +55,7 @@ class pop:
         return c
     def next_gen(self):
         next_gen = [self.pick_parent().mutate() for i in range(self.size)]
+        next_gen[0] = self.cars[self.find_farthest()[1]]
         del self.cars
         self.cars = next_gen
         for c in self.cars:
