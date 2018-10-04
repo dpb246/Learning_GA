@@ -2,6 +2,7 @@
 KNOWN ISSUES:
 random generation
 Camera will teleport around, # IDEA: Add smooth transition to new car, somewhat fixed with
+******Small Memory Leak******
 
 TODO:
 Add more random terrain rather than scripted
@@ -11,7 +12,6 @@ Move main loop into genetic loop
 import random
 #List of good seeds: 1,
 random.seed(100) #Seed right away to allow code to run below with seeded random module
-
 from ult import *
 from car_data import *
 import pygame
@@ -58,10 +58,8 @@ world = world(gravity=(0, -10), doSleep=True)
 stage = level(world=world)
 
 #all the cars
-population = pop(physworld=world, size=25)
+population = pop(physworld=world, size=50)
 print("Initializing a Population with {} cars".format(population.size))
-population.make_cars()
-cars = population.cars
 
 #Config drawing
 s.screen = screen
@@ -75,9 +73,6 @@ running = True
 # loop_count = 0
 while running:
     physics_ticks = 0 #This is so each simulation gets the same amount of simulated time, although this means physics speed depends on frame_rate
-    # objgraph.show_most_common_types(limit=40)
-    # print("===============================", loop_count)
-    # loop_count += 1
     while physics_ticks <= MAX_TIME/TIME_STEP and running:
         physics_ticks += 1
         # Check the event queue
@@ -104,16 +99,18 @@ while running:
 
             #Have screen follow the car
             s.XOFFSET = (-farthest_dist) * s.PPM + SCREEN_WIDTH // 2
-            s.YOFFSET = (cars[index].body.position[1]) * s.PPM + SCREEN_HEIGHT // 2
+            #s.YOFFSET = SCREEN_HEIGHT // 2
+            s.YOFFSET = (population.cars[index].body.position[1]) * s.PPM + SCREEN_HEIGHT // 2
             # Flip the screen and try to keep at the target FPS
             pygame.display.flip()
             clock.tick(TARGET_FPS)
         else:
             print(farthest_dist)
     print("The Fittest car was {}".format(population.calculate_fitness()))
-    for c in population.cars:
-        c.randomize()
-        c.update_to_new_data()
+    population.next_gen()
+    # for c in population.cars:
+    #     c.randomize()
+    #     c.update_to_new_data()
     stage.reset()
 
 pygame.quit()

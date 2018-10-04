@@ -24,10 +24,11 @@ class pop:
         self.cars = [car(physworld) for i in range(size)]
         for c in self.cars:
             c.randomize()
+            c.update_to_new_data()
     #Updates physical models of the cars to the new data
-    def make_cars(self):
+    def update_cars(self):
         for c in self.cars:
-            c.make_car(c.data)
+            c.update_to_new_data()
     #Finds and returns the distance and index of the car that has travelled the farthest in the positive x direction
     def find_farthest(self):
         max_dis = 0
@@ -53,4 +54,8 @@ class pop:
             if number <= 0: break
         return c
     def next_gen(self):
-        pass
+        next_gen = [self.pick_parent().mutate() for i in range(self.size)]
+        del self.cars
+        self.cars = next_gen
+        for c in self.cars:
+            c.update_to_new_data()

@@ -4,6 +4,7 @@ import pygame
 from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE)
 from Box2D import * # The main library
 from Box2D.b2 import (world, polygonShape, circleShape, edgeShape, staticBody, dynamicBody)
+from copy import deepcopy
 '''
 Stores physical objects linked to car
 '''
@@ -13,20 +14,30 @@ class car:
         self.world = world
         self.data = car_data()
         self.fitness = 0
-        self.make_car(self.data)
+        self.make_car()
     def calc_fitness(self):
         self.fitness = (self.body.position.x - self.spawn.x)**2 #Squared distance travelled
         return self.fitness
     def __str__(self):
         return "Fitness: " + str(self.fitness) + "\n" + str(self.data)
+    def __del__(self):
+        self.world.DestroyBody(self.body)
+        for c in self.wheels:
+            self.world.DestroyBody(c)
     def randomize(self):
         self.data.randomize()
+    def mutate(self):
+        child = car(self.world)
+        child.data = deepcopy(self.data)
+        child.randomize()
+        return child
     def update_to_new_data(self):
         self.world.DestroyBody(self.body)
         for c in self.wheels:
             self.world.DestroyBody(c)
-        self.make_car(self.data)
-    def make_car(self, c):
+        self.make_car()
+    def make_car(self):
+        c = self.data
         # Create a car with 2 wheels
         self.body = self.world.CreateDynamicBody(
             position=self.spawn(),
