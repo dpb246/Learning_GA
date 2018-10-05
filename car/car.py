@@ -17,7 +17,7 @@ class car:
         self.mutate_rate = 0.1
         self.make_car()
     def calc_fitness(self):
-        self.fitness = (self.body.position.x - self.spawn.x)**2 #Squared distance travelled
+        self.fitness = ((self.body.position.x - self.spawn.x)**3) /4 #Squared distance travelled
         return self.fitness
     def __str__(self):
         return "Fitness: " + str(self.fitness) + "\n" + str(self.data)
@@ -77,8 +77,8 @@ class car:
                         anchor=wheel.position,
                         axis=(0.0, 1.0),
                         motorSpeed=w.motorSpeed,
-                        maxMotorTorque=50,
-                        enableMotor=True,
+                        maxMotorTorque=1000,
+                        enableMotor=False,
                         frequencyHz=w.frequencyHz,
                         dampingRatio=w.dampingRatio
                     )

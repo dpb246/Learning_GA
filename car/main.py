@@ -4,6 +4,8 @@ random generation
 Camera will teleport around, # IDEA: Add smooth transition to new car, somewhat fixed with
 ******Small Memory Leak******
 
+Allow cars 60 physics ticks before turning on motors
+
 TODO:
 Add more random terrain rather than scripted
 Add all genetic functionality
@@ -11,7 +13,7 @@ Move main loop into genetic loop
 '''
 import random
 #List of good seeds: 1,
-random.seed(103) #Seed right away to allow code to run below with seeded random module
+random.seed(1000) #Seed right away to allow code to run below with seeded random module
 from ult import *
 from car_data import *
 import pygame
@@ -30,8 +32,9 @@ import objgraph
 # --- constants ---
 # Box2D deals with meters, but we want to display pixels,
 # so define a conversion factor:
-TARGET_FPS = 120
-MAX_TIME = 10.0
+TARGET_FPS = 240
+MAX_TIME = 10.0 #Time cars have with motors on
+DELAY_TIME = 1.5 #Time to let cars settle before motors get turned on
 TIME_STEP = 1.0 / 60
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
 s.XOFFSET = 0
@@ -74,7 +77,9 @@ gen_count = 0
 # loop_count = 0
 while running:
     physics_ticks = 0 #This is so each simulation gets the same amount of simulated time, although this means physics speed depends on frame_rate
-    while physics_ticks <= MAX_TIME/TIME_STEP and running:
+    while physics_ticks <= (MAX_TIME+DELAY_TIME)/TIME_STEP and running:
+        if physics_ticks == DELAY_TIME/TIME_STEP:
+            population.activate_motors()
         physics_ticks += 1
         # Check the event queue
         for event in pygame.event.get():
@@ -91,7 +96,7 @@ while running:
         stage.add_ground_if_needed(farthest_dist)
         if draw:
             screen.fill((0, 0, 0, 0))
-            count_down.update(_text="{0:0.1f}".format(MAX_TIME-physics_ticks*TIME_STEP))
+            count_down.update(_text="{0:0.1f}".format((MAX_TIME+DELAY_TIME)-physics_ticks*TIME_STEP))
             UI.draw(screen)
             # Draw the world
             for body in world.bodies:

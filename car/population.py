@@ -29,6 +29,10 @@ class pop:
     def update_cars(self):
         for c in self.cars:
             c.update_to_new_data()
+    def activate_motors(self):
+        for c in self.cars:
+            for s in c.springs:
+                s.enableMotor = True
     #Finds and returns the distance and index of the car that has travelled the farthest in the positive x direction
     def find_farthest(self):
         max_dis = 0
