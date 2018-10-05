@@ -25,14 +25,19 @@ class pop:
         for c in self.cars:
             c.randomize()
             c.update_to_new_data()
+        # self.cars[0] = car(physworld)
+        # self.cars[0].data.wheels[0].pos = point(1.25, -1)
+        # self.cars[0].data.wheels[1].pos = point(-1.25, -1)
+        # self.cars[0].data.wheels[0].radius = 1
+        # self.cars[0].data.wheels[1].radius = 1
+        # self.cars[0].update_to_new_data()
     #Updates physical models of the cars to the new data
     def update_cars(self):
         for c in self.cars:
             c.update_to_new_data()
     def activate_motors(self):
         for c in self.cars:
-            for s in c.springs:
-                s.enableMotor = True
+            c.start_motors()
     #Finds and returns the distance and index of the car that has travelled the farthest in the positive x direction
     def find_farthest(self):
         max_dis = 0

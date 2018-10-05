@@ -32,7 +32,7 @@ import objgraph
 # --- constants ---
 # Box2D deals with meters, but we want to display pixels,
 # so define a conversion factor:
-TARGET_FPS = 240
+TARGET_FPS = 120
 MAX_TIME = 10.0 #Time cars have with motors on
 DELAY_TIME = 1.5 #Time to let cars settle before motors get turned on
 TIME_STEP = 1.0 / 60

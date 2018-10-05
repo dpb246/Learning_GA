@@ -5,7 +5,7 @@ import random
 from ult import *
 
 class wheel:
-    def __init__(self, radius=0, x=0, y=0, motorSpeed=-30, frequencyHz=10, dampingRatio=0.7, friction=1, density=1):
+    def __init__(self, radius=0, x=0, y=0, motorSpeed=-30, frequencyHz=100, dampingRatio=0.7, friction=1, density=1):
         self.radius = radius
         self.pos = point(x, y)
         self.friction = friction
@@ -61,10 +61,10 @@ Use relative positions
 '''
 class car_data:
     def __init__(self):
-        self.wheel_count = 2
+        self.wheel_count = 3
         self.wheels = [wheel() for i in range(self.wheel_count)]
         self.body = body()
-        self.number_of_genes = self.body.number_of_genes + 2*self.wheels[0].number_of_genes
+        self.number_of_genes = self.body.number_of_genes + self.wheel_count*self.wheels[0].number_of_genes
     def randomize(self, change=None):
         if change==None: change = [True for i in range(self.number_of_genes)]
         self.body.randomize(what=change[0:self.body.number_of_genes])

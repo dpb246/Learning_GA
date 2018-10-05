@@ -38,6 +38,9 @@ class car:
         for c in self.wheels:
             self.world.DestroyBody(c)
         self.make_car()
+    def start_motors(self):
+        for s in self.springs:
+            s.motorEnabled = True
     def make_car(self):
         c = self.data
         # Create a car with 2 wheels
@@ -66,7 +69,7 @@ class car:
                     filter=b2Filter(
                         groupIndex=-1,
                         categoryBits=0x0002,
-                        maskBits=0xFFFF
+                        maskBits=0xFFFF^0x0002
                     )
                 )
             )
@@ -77,7 +80,7 @@ class car:
                         anchor=wheel.position,
                         axis=(0.0, 1.0),
                         motorSpeed=w.motorSpeed,
-                        maxMotorTorque=1000,
+                        maxMotorTorque=100,
                         enableMotor=False,
                         frequencyHz=w.frequencyHz,
                         dampingRatio=w.dampingRatio

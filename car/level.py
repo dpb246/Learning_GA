@@ -7,9 +7,13 @@ Holds ground and related functions
 class level:
     def __init__(self, world=None):
         self.world = world
+        self.ceiling_hieght = 15
         # The ground -- create some terrain
         self.ground = world.CreateStaticBody(
             shapes=b2EdgeShape(vertices=[(-20, 0), (10, 0)])
+        )
+        self.ceiling = world.CreateStaticBody(
+            shapes=b2EdgeShape(vertices=[(-20, self.ceiling_hieght), (10, self.ceiling_hieght)])
         )
         self.blocker = world.CreateStaticBody( #Prevents cars from driving too far to the left
             position=(-18, 10),
@@ -21,6 +25,7 @@ class level:
     def reset(self):
         self.world.DestroyBody(self.ground)
         self.world.DestroyBody(self.blocker)
+        self.world.DestroyBody(self.ceiling)
         self.__init__(world = self.world)
     def add_ground_if_needed(self, farthest_dist):
         if self.x < farthest_dist+30:
@@ -32,6 +37,11 @@ class level:
                 vertices=[(self.x, self.y1), (self.x + self.dx, y2)],
                 density=0,
                 friction=1,
+            )
+            self.ceiling.CreateEdgeFixture(
+                vertices=[(self.x, self.ceiling_hieght), (self.x+self.dx, self.ceiling_hieght)],
+                density = 0,
+                friction = 1
             )
             self.y1 = y2
             self.x += self.dx
