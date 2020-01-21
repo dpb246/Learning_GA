@@ -2,13 +2,14 @@
 
 ### Work in Progress
 pathfinder:
-  main.py is a simple path finding genetic algorithm
-  needs:
+  - main.py is a simple path finding genetic algorithm
+  - needs:
     - pygame
+
 car:
-  main.py starts the graphics
-  only renders every 10th generation
-  needs:
+- main.py starts the graphics
+- only renders every 10th generation
+- needs:
     - pygame
     - box2d
     - objgraph
